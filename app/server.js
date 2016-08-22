@@ -4,13 +4,10 @@ import webpackConfig from '../webpack.config';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import express from 'express';
-import apiRouter from './api';
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cookieParser());
 
 const compiler = webpack(webpackConfig);
 
@@ -30,11 +27,11 @@ app.use(webpackHotMiddleware(compiler, {
 
 app.use(express.static('./public'));
 
-app.get('/hello', function (req, res) {
-  res.send('Hello, world!');
+const users = [];
+app.post('/api/users', function (req, res) {
+  users.push(req.body);
+  res.sendStatus(201);
 });
-
-app.use('/api', apiRouter);
 
 app.listen(3000, function () {
   console.log('Listening on 3000');
