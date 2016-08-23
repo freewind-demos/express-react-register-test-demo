@@ -5,6 +5,7 @@ import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 import express from 'express';
 import bodyParser from 'body-parser';
+import registerHandler from './register';
 
 const app = express();
 app.use(bodyParser.json());
@@ -27,11 +28,7 @@ app.use(webpackHotMiddleware(compiler, {
 
 app.use(express.static('./public'));
 
-const users = [];
-app.post('/api/users', function (req, res) {
-  users.push(req.body);
-  res.sendStatus(201);
-});
+app.post('/api/users', registerHandler);
 
 app.listen(3000, function () {
   console.log('Listening on 3000');

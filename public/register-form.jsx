@@ -11,17 +11,17 @@ export default class RegisterForm extends Component {
   }
 
   render() {
-    return <form onSubmit={this._onSubmit.bind(this)}>
+    return <form id="form" onSubmit={this._onSubmit.bind(this)}>
       <div>
-        Register
+        <h1>Register</h1>
       </div>
       <div>
-        <input type="text" placeholder="username" onChange={event => {
+        <input id="username" type="text" placeholder="username" onChange={event => {
           this.setState({username: event.target.value})
         }}/>
       </div>
       <div>
-        <input type="password" placeholder="password" onChange={event => {
+        <input id="password" type="password" placeholder="password" onChange={event => {
           this.setState({password: event.target.value})
         }}/>
       </div>
@@ -33,6 +33,7 @@ export default class RegisterForm extends Component {
 
   _onSubmit(event) {
     event.preventDefault();
+
     request
       .post('/api/users')
       .send({
@@ -40,9 +41,18 @@ export default class RegisterForm extends Component {
         password: this.state.password
       })
       .end((err, res) => {
-        if (err) return console.log(err);
-        console.log(res);
-        alert('successful!');
+        if (err) {
+          console.error(err);
+          if (res.statusCode === 400) {
+            return window.alert('提交数据格式有误：' + res.text);
+          }
+          if (res.statusCode === 409) {
+            return window.alert('注册失败：' + res.text);
+          }
+          return window.alert('未知错误：' + res.statusCode);
+        }
+        window.alert('注册成功：' + res.text);
       })
   }
+
 }
